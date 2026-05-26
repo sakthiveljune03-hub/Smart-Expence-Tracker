@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Tracker - Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <!-- Chart.js for visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="dashboard-page hidden-until-auth">
+    <nav class="navbar">
+        <div class="nav-brand"><i class="fa-solid fa-wallet"></i> ExpenseTracker</div>
+        <div class="nav-user">
+            <div id="sync-status" class="sync-status" title="Cloud Sync Status">
+                <i class="fa-solid fa-cloud"></i>
+                <span id="sync-text">Synced</span>
+            </div>
+            <button id="theme-toggle" class="btn btn-secondary btn-small" title="Toggle Light/Dark Mode"><i class="fa-solid fa-sun" id="theme-icon"></i></button>
+            <span id="user-greeting">Loading...</span>
+            <button id="logout-btn" class="btn btn-secondary btn-small"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+        </div>
+    </nav>
+
+    <main class="dashboard-container">
+        <!-- Magic Bar: Smart Text & Voice -->
+        <section class="card magic-bar-section" style="margin-bottom: 2rem; padding: 1rem;">
+            <div class="magic-bar-wrapper">
+                <i class="fa-solid fa-wand-magic-sparkles magic-icon"></i>
+                <input type="text" id="magic-input" placeholder="Try: 'Dinner 500' or 'Salary 2000 income'...">
+                <button id="voice-btn" class="btn-voice" title="Add by Voice">
+                    <i class="fa-solid fa-microphone"></i>
+                </button>
+            </div>
+            <p class="magic-hint">Type or speak: <b>[Description] [Amount] [Type]</b></p>
+        </section>
+
+        <!-- Summary Cards -->
+        <section class="summary-cards">
+            <div class="card balance-card">
+                <h3><i class="fa-solid fa-scale-balanced"></i> Total Balance</h3>
+                <h2 id="total-balance">₹0.00</h2>
+            </div>
+            <div class="card income-card">
+                <h3><i class="fa-solid fa-arrow-trend-up"></i> Total Income</h3>
+                <h2 id="total-income" class="text-success">₹0.00</h2>
+            </div>
+            <div class="card expense-card">
+                <h3><i class="fa-solid fa-arrow-trend-down"></i> Total Expense</h3>
+                <h2 id="total-expense" class="text-danger">₹0.00</h2>
+            </div>
+        </section>
+
+        <!-- Budget Tracker -->
+        <section class="card budget-section" style="margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; gap: 1.5rem;">
+            <div style="flex: 1;">
+                <h3><i class="fa-solid fa-bullseye"></i> Monthly Budget Goal</h3>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.9rem;">
+                    <span id="budget-spent-text">Spent: ₹0.00</span>
+                    <span id="budget-limit-text">Limit: Not set</span>
+                </div>
+                <div style="width: 100%; height: 12px; background: var(--bg-input); border-radius: 6px; overflow: hidden; border: 1px solid var(--border-color);">
+                    <div id="budget-progress-bar" style="width: 0%; height: 100%; background: var(--success-color); transition: width 0.5s ease, background-color 0.5s ease;"></div>
+                </div>
+            </div>
+            <div style="display: flex; gap: 0.5rem; align-items: flex-end;">
+                <div class="form-group" style="margin-bottom: 0;">
+                    <input type="number" id="budget-input" placeholder="Set limit (₹)" style="width: 120px;">
+                </div>
+                <button id="set-budget-btn" class="btn btn-primary btn-small">Set</button>
+            </div>
+        </section>
+
+        <div class="dashboard-grid">
+            <!-- Add Transaction Form -->
+            <section class="card form-section">
+                <h3 id="form-title"><i class="fa-solid fa-circle-plus"></i> Add Transaction</h3>
+                <form id="transaction-form">
+                    <input type="hidden" id="edit-transaction-id" value="">
+                    <div class="form-group">
+                        <label>Transaction Type</label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="type" value="expense" checked>
+                                Expense
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="type" value="income">
+                                Income
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="desc">Description</label>
+                        <input type="text" id="desc" placeholder="e.g. Groceries" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="amount">Amount (₹)</label>
+                        <input type="number" id="amount" placeholder="e.g. 1500" min="1" step="any" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="category">Category</label>
+                        <select id="category" required>
+                            <!-- Expense Categories (Default) -->
+                            <option value="Food & Dining">Food & Dining</option>
+                            <option value="Transportation">Transportation</option>
+                            <option value="Housing">Housing</option>
+                            <option value="Entertainment">Entertainment</option>
+                            <option value="Health">Health</option>
+                            <option value="Others">Others</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="date">Date</label>
+                        <input type="date" id="date" required>
+                    </div>
+                    <div class="form-message error" id="transaction-error"></div>
+                    <button type="submit" class="btn btn-primary btn-block">
+                        <span class="btn-text" id="submit-btn-text"><i class="fa-solid fa-plus"></i> Add Transaction</span>
+                        <span class="loader hidden"></span>
+                    </button>
+                    <button type="button" id="cancel-edit-btn" class="btn btn-secondary btn-block hidden" style="margin-top: 0.5rem;">
+                        <span class="btn-text">Cancel Edit</span>
+                    </button>
+                </form>
+            </section>
+
+            <!-- Charts & Visualization -->
+            <section class="card chart-section">
+                <h3><i class="fa-solid fa-chart-pie"></i> Expenses by Category</h3>
+                <div class="chart-container">
+                    <canvas id="expenseChart"></canvas>
+                    <div id="chart-empty-state" class="empty-state hidden">
+                        <i class="fa-solid fa-chart-bar"></i>
+                        <p>No expense data to display.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Transactions List -->
+            <section class="card list-section">
+                <div class="list-header">
+                    <h3><i class="fa-solid fa-list-ul"></i> Recent Transactions</h3>
+                    <div class="filter-group" style="display: flex; gap: 0.5rem;">
+                        <button id="export-csv-btn" class="btn btn-secondary btn-small"><i class="fa-solid fa-download"></i> Export CSV</button>
+                        <select id="filter-type">
+                            <option value="all">All</option>
+                            <option value="income">Income</option>
+                            <option value="expense">Expense</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div id="transactions-list" class="transactions-list">
+                    <div class="loader-container" id="list-loader">
+                        <span class="loader loader-dark"></span>
+                    </div>
+                    <!-- Transactions will be injected here -->
+                </div>
+                <div id="list-empty-state" class="empty-state hidden">
+                    <i class="fa-regular fa-folder-open"></i>
+                    <p>No transactions found. Add one above!</p>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Main Application Logic -->
+    <script type="module" src="app.js"></script>
+</body>
+</html>

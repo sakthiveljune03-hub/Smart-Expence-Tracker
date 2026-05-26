@@ -1,0 +1,17 @@
+{
+  "name": "Expense Tracker Advanced",
+  "short_name": "ExpenseApp",
+  "description": "A developer-level full-stack expense tracker.",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#6366f1",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/3135/3135679.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

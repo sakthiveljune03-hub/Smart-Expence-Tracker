@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Tracker - Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+</head>
+<body class="auth-page">
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <h2>Welcome to ExpenseTracker</h2>
+                <p id="auth-subtitle">Log in to manage your finances</p>
+            </div>
+
+            <!-- Login Form -->
+            <form id="login-form" class="auth-form active">
+                <div class="form-group">
+                    <label for="login-email">Email</label>
+                    <input type="email" id="login-email" placeholder="Enter your email" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <div class="password-input-wrapper">
+                        <input type="password" id="login-password" placeholder="Enter your password" required>
+                        <i class="fa-solid fa-eye-slash toggle-password" data-target="login-password"></i>
+                    </div>
+                </div>
+                <div style="text-align: right; margin-bottom: 1rem;">
+                    <a href="#" id="forgot-password" style="font-size: 0.85rem;">Forgot Password?</a>
+                </div>
+                <div class="form-message error" id="login-error"></div>
+                <button type="submit" class="btn btn-primary btn-block">
+                    <span class="btn-text"><i class="fa-solid fa-right-to-bracket"></i> Log In</span>
+                    <span class="loader hidden"></span>
+                </button>
+                <div class="auth-divider" style="text-align: center; margin: 1.5rem 0; color: var(--text-muted); position: relative;">
+                    <span style="background: var(--bg-card); padding: 0 10px; position: relative; z-index: 1;">OR</span>
+                    <hr style="position: absolute; top: 50%; left: 0; right: 0; border: none; border-top: 1px solid var(--border-color); margin: 0; z-index: 0;">
+                </div>
+                <button type="button" id="google-login-btn" class="btn btn-secondary btn-block" style="margin-bottom: 1.5rem;">
+                    <i class="fa-brands fa-google" style="color: #ea4335;"></i> Continue with Google
+                </button>
+                <p class="auth-switch">
+                    Don't have an account? <a href="#" id="show-register">Sign Up</a>
+                </p>
+            </form>
+
+            <!-- Registration Form -->
+            <form id="register-form" class="auth-form hidden">
+                <div class="form-group">
+                    <label for="register-name">Full Name</label>
+                    <input type="text" id="register-name" placeholder="Enter your name" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-email">Email</label>
+                    <input type="email" id="register-email" placeholder="Enter your email" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-password">Password</label>
+                    <div class="password-input-wrapper">
+                        <input type="password" id="register-password" placeholder="Create a password" required>
+                        <i class="fa-solid fa-eye-slash toggle-password" data-target="register-password"></i>
+                    </div>
+                </div>
+                <div class="form-message error" id="register-error"></div>
+                <div class="form-message success" id="register-success"></div>
+                <button type="submit" class="btn btn-primary btn-block">
+                    <span class="btn-text"><i class="fa-solid fa-user-plus"></i> Sign Up</span>
+                    <span class="loader hidden"></span>
+                </button>
+                <p class="auth-switch">
+                    Already have an account? <a href="#" id="show-login">Log In</a>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main Application Logic (Modular Firebase setup included in app.js) -->
+    <script type="module" src="app.js"></script>
+</body>
+</html>
